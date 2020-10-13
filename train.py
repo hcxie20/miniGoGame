@@ -58,6 +58,8 @@ def play(player1, player2):
         if rst != 0:
             break
 
+    return rst
+
 def play_round(round_num, player1, player2):
     cond_print('Round {0}'.format(round_num))
     winner = play(player1, player2)
