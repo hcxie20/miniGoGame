@@ -1,2 +1,5 @@
-.input.txt
-.output.txt
+input.txt
+output.txt
+.coverage
+.idea
+__pycache__

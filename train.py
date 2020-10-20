@@ -1,16 +1,19 @@
 import os
 import shutil
 import time
-
 import host
-from my_player3 import QLearningPlayer
+from my_player3 import QLearningPlayer, ABPruningPlayer
 from trainers import THost, TRandomPlayer
 
 host = THost()
-qlearner = QLearningPlayer()
+qlearner = ABPruningPlayer()
+# qlearner = QLearningPlayer()
 opponent = TRandomPlayer()
 
 PRINT = False
+TRAIN = True
+
+NUM_GAMES = 1000
 
 def cond_print(val):
     if PRINT:
@@ -50,7 +53,7 @@ def play(player1, player2):
 
         _clean_output()
 
-        cond_print('Black makes move...')
+        cond_print('White makes move...')
         player2.play_one_step()
 
         rst = host.judge(moves, PRINT)
@@ -58,6 +61,7 @@ def play(player1, player2):
         if rst != 0:
             break
 
+    pre_clean_up()
     return rst
 
 def play_round(round_num, player1, player2):
@@ -70,7 +74,7 @@ def play_round(round_num, player1, player2):
         result = 'win'
     else:
         result = 'loss'
-    player1.train(result)
+    # player1.train(result, False)
 
     if winner == 0:
         result = 'draw'
@@ -78,7 +82,7 @@ def play_round(round_num, player1, player2):
         result = 'win'
     else:
         result = 'loss'
-    player2.train(result)
+    # player2.train(result, False)
 
     if winner == 2:
         cond_print('Player 2 {0} Win'.format(player2.type))
@@ -93,7 +97,7 @@ def play_round(round_num, player1, player2):
 def main(opponent=TRandomPlayer()):
     start = time.time()
 
-    play_time = 10000
+    play_time = NUM_GAMES
     player1 = opponent
     player2 = qlearner
     black_win_time = 0
@@ -120,12 +124,15 @@ def main(opponent=TRandomPlayer()):
             black_tie_time += 1
 
     print('===== summary =====')
-    print('You play as Black | Win: {0} | Lose: {1} | Tie: {2}'.format(black_tie_time, play_time // 2 - black_win_time - black_tie_time, black_tie_time))
-    print('You play as white | Win: {0} | Lose: {1} | Tie: {2}'.format(white_tie_time, play_time // 2 - white_win_time - white_tie_time, white_tie_time))
+    print('You play as Black | Win: {0} | Lose: {1} | Tie: {2}'.format(black_win_time, play_time // 2 - black_win_time - black_tie_time, black_tie_time))
+    print('You play as white | Win: {0} | Lose: {1} | Tie: {2}'.format(white_win_time, play_time // 2 - white_win_time - white_tie_time, white_tie_time))
 
     end = time.time()
 
     print('Time Taken: {0} seconds'.format(end - start))
+
+    # for player in [player1, player2]:
+    #     player._update_training()
 
 if __name__ == '__main__':
     main()
